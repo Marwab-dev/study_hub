@@ -1,0 +1,24 @@
+main
+ ↓
+Splash
+ ↓
+Login
+ ↓
+Register
+ ↓
+HomeScreen
+ ├─ Feed
+ │   └─ Comments
+ │
+ ├─ Search
+ │   └─ User Profile
+ │
+ ├─ Add Post
+ │   └─ Back to Home
+ │
+ ├─ LeaderBoard
+ │   └─ User Profile
+ │
+ └─ Profile
+     ├─ Edit Profile
+     └─ Logout → Login
