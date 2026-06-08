@@ -172,11 +172,21 @@ class _HomeBody extends StatelessWidget {
 
             const SizedBox(height: 15),
 
-            const NoteCard(title: "Flutter Basics", likes: 120, comments: 30),
+            const NoteCard(
+              title: "Flutter Basics",
+              likes: 120,
+              comments: 30,
+              views: 450,
+            ),
 
             const SizedBox(height: 12),
 
-            const NoteCard(title: "Physics Notes", likes: 80, comments: 14),
+            const NoteCard(
+              title: "Physics Notes",
+              likes: 80,
+              comments: 14,
+              views: 320,
+            ),
           ],
         ),
       ),
