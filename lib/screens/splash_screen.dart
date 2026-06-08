@@ -11,10 +11,34 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _controller;
+
+  late Animation<double> scaleAnimation;
+  late Animation<double> fadeAnimation;
+
   @override
   void initState() {
     super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    );
+
+    scaleAnimation = Tween<double>(
+      begin: 0.7,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+
+    fadeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
+
+    _controller.forward();
+
     _checkUser();
   }
 
@@ -25,17 +49,18 @@ class _SplashScreenState extends State<SplashScreen> {
 
     User? user = FirebaseAuth.instance.currentUser;
 
-    if (user != null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => HomeScreen()),
-      );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      );
-    }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => user != null ? const HomeScreen() : const LoginScreen(),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -45,55 +70,90 @@ class _SplashScreenState extends State<SplashScreen> {
         width: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xff4F46E5), Color(0xff7C3AED)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
+            colors: [Color(0xff4F46E5), Color(0xff7C3AED), Color(0xff9333EA)],
           ),
         ),
         child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(25),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(.15),
-                  shape: BoxShape.circle,
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              return Opacity(
+                opacity: fadeAnimation.value,
+                child: Transform.scale(
+                  scale: scaleAnimation.value,
+                  child: child,
                 ),
-                child: const Icon(
-                  Icons.menu_book_rounded,
-                  size: 80,
-                  color: Colors.white,
+              );
+            },
+            child: Column(
+              children: [
+                const Spacer(),
+
+                Container(
+                  width: 140,
+                  height: 140,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(.15),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white.withOpacity(.2)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(.15),
+                        blurRadius: 25,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.school_rounded,
+                    size: 80,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 25),
+                const SizedBox(height: 30),
 
-              const Text(
-                "StudyHub",
-                style: TextStyle(
-                  fontSize: 34,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: 1.5,
+                const Text(
+                  "SkillVerse",
+                  style: TextStyle(
+                    fontSize: 38,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 1.2,
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 10),
+                const SizedBox(height: 12),
 
-              const Text(
-                "Learn • Share • Grow",
-                style: TextStyle(color: Colors.white70, fontSize: 16),
-              ),
+                const Text(
+                  "Learn • Share • Grow",
+                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                ),
 
-              const SizedBox(height: 50),
+                const SizedBox(height: 50),
 
-              SizedBox(height: 120, child: Image.asset("images/study.png")),
+                SizedBox(
+                  width: 200,
+                  child: LinearProgressIndicator(
+                    minHeight: 6,
+                    borderRadius: BorderRadius.circular(20),
+                    backgroundColor: Colors.white24,
+                    color: Colors.white,
+                  ),
+                ),
 
-              const SizedBox(height: 20),
+                const Spacer(),
 
-              const CircularProgressIndicator(color: Colors.white),
-            ],
+                const Text(
+                  "Version 1.0.0",
+                  style: TextStyle(color: Colors.white60, fontSize: 13),
+                ),
+
+                const SizedBox(height: 25),
+              ],
+            ),
           ),
         ),
       ),
